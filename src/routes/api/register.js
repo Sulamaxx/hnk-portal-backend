@@ -3,9 +3,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
+const authMiddleware = require('../../middlewares/authMiddleware');
 
-router.post('/', async (req, res) => {
-  const { first_name,last_name,email,address,mobile,username,password,role } = req.body;
+router.post('/', authMiddleware, async (req, res) => {
+  const { first_name, last_name, email, address, mobile, username, password, role } = req.body;
 
   try {
     // Check if the user already exists
