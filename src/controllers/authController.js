@@ -1,19 +1,14 @@
-// src/routes/api/auth.js
-const express = require('express');
-const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../../models/User');
-const keys = require('../../config/keys');
-const authMiddleware = require('../../middlewares/authMiddleware');
+const User = require('../models/User');
+const keys = require('../config/keys');
 
-// Function to generate a new refresh token
 const generateRefreshToken = () => {
   return jwt.sign({}, keys.refreshTokenSecret, { expiresIn: '7d' });
 };
 
-// Login route
-router.post('/login', async (req, res) => {
+exports.login = async (req, res) => {
+  // Your login logic here
   const { username, password } = req.body;
 
   try {
@@ -61,11 +56,10 @@ router.post('/login', async (req, res) => {
     console.error('Error in login route:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+};
 
-
-// Refresh token route
-router.post('/refresh', async (req, res) => {
+exports.refresh = async (req, res) => {
+  // Your refresh token logic here
   const { refreshToken } = req.cookies.refreshToken;
 
   try {
@@ -82,10 +76,10 @@ router.post('/refresh', async (req, res) => {
     console.error('Error in refresh route:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+};
 
-
-router.get('/logout', async (req, res) => {
+exports.logout = async (req, res) => {
+  // Your logout logic here
   const userId = req.cookies.userId;
 
   try {
@@ -109,6 +103,4 @@ router.get('/logout', async (req, res) => {
     console.error('Error in logout route:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-});
-
-module.exports = router;
+};

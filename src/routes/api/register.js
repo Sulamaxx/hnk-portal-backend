@@ -9,6 +9,12 @@ router.post('/', authMiddleware, async (req, res) => {
   const { first_name, last_name, email, address, mobile, username, password, role } = req.body;
 
   try {
+
+    // Check if the user making the request has the required role (admin, for example)
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+    }
+
     // Check if the user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
