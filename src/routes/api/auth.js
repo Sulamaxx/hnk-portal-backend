@@ -32,13 +32,16 @@ router.post('/login', async (req, res) => {
     const accessToken = jwt.sign({ userId: user._id, role: user.role }, keys.secretOrKey, { expiresIn: '1h' });
     const refreshToken = generateRefreshToken();
 
-    // Add the previous access token to the revokedTokens array
-    if (req.body.previousAccessToken) {
-      user.revokedTokens.push(req.body.previousAccessToken);
-    }
-
     user.refreshToken = refreshToken;
+    user.revokedTokens.push(req.cookies.accessToken);
     await user.save();
+
+    const maxAge = 7 * 24 * 60 * 60;
+
+    // Set cookies for access token and refresh token
+    res.cookie('userId', user._id, { httpOnly: true, maxAge: maxAge * 1000 });
+    res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: maxAge * 1000 });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: maxAge * 1000 });
 
     switch (user.role) {
       case 'admin':
@@ -60,14 +63,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Example of a protected route using the middleware
-router.get('/protected', authMiddleware, (req, res) => {
-  res.json({ message: 'This is a protected route', user: req.user });
-});
 
 // Refresh token route
 router.post('/refresh', async (req, res) => {
-  const { refreshToken } = req.body;
+  const { refreshToken } = req.cookies.refreshToken;
 
   try {
     const user = await User.findOne({ refreshToken });
@@ -85,9 +84,9 @@ router.post('/refresh', async (req, res) => {
   }
 });
 
-// Logout route
-router.post('/logout', authMiddleware, async (req, res) => {
-  const userId = req.user.userId;
+
+router.get('/logout', async (req, res) => {
+  const userId = req.cookies.userId;
 
   try {
     const user = await User.findById(userId);
@@ -96,10 +95,14 @@ router.post('/logout', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Add the current refresh token to revokedTokens
-    user.revokedTokens.push(user.refreshToken);
+    user.revokedTokens.push(req.cookies.accessToken); // Add the current refresh token to revokedTokens
     user.refreshToken = null;
     await user.save();
+
+    // Clear cookies
+    res.clearCookie('userId');
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
 
     res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
