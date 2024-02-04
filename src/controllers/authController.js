@@ -34,9 +34,9 @@ exports.login = async (req, res) => {
     const maxAge = 7 * 24 * 60 * 60;
 
     // Set cookies for access token and refresh token
-    res.cookie('userId', user._id, { httpOnly: true, maxAge: maxAge * 1000 });
-    res.cookie('accessToken', accessToken, { httpOnly: true, maxAge: maxAge * 1000 });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: maxAge * 1000 });
+    res.cookie('userId', user._id, { httpOnly: true, sameSite: 'None', secure: true, maxAge: maxAge * 1000 });
+    res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: maxAge * 1000 });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: maxAge * 1000 });
 
     switch (user.role) {
       case 'admin':

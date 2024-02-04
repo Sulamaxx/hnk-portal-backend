@@ -17,7 +17,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 // Enable CORS for all routes
-app.use(cors());
+app.use(cors({
+    origin:'http://localhost:3000',
+    Credential:true,
+}));
 
 // Connect to MongoDB
 mongoose
