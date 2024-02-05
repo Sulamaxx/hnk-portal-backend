@@ -96,6 +96,7 @@ exports.logout = async (req, res) => {
 
     // Clear cookies
     res.clearCookie('userId');
+    res.clearCookie('role');
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
 

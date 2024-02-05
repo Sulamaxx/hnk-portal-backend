@@ -145,13 +145,13 @@ exports.getAllEmployees = async (req, res) => {
     try {
         // Check if the user making the request has the required role (admin, for example)
         if (req.user.role !== 'admin') {
-            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+            return res.status(403).json({}, { message: 'Unauthorized: Insufficient privileges' });
         }
 
         // Retrieve all employees from the database based on the 'employee' role
         const employees = await User.find({ role: 'employee' }, { password: 0, refreshToken: 0 });
 
-        res.status(200).json({ employees });
+        res.status(200).json({ employees }, { message: 'success' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
