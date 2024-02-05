@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   refreshToken: { type: String },
   revokedTokens: [{ type: String }],
-  img: { type: String },
+  image: { type: String },
   createdAt: { type: Date, default: Date.now },
   companyName: { type: String, default: null },
   description: { type: String, default: null },
