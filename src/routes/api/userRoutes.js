@@ -1,9 +1,9 @@
 const express = require('express');
 const userController = require('../../controllers/userController');
+const clientEmployeeController = require('../../controllers/clientEmployeeController');
 const authMiddleware = require('../../middlewares/authMiddleware');
 
 const router = express.Router();
-
 
 // General user routes
 
@@ -26,6 +26,9 @@ router.get('/clients/all', authMiddleware, userController.getAllClients);
 
 // Search clients
 router.get('/clients/search', authMiddleware, userController.searchClients);
+
+// client home page data
+router.get('/clients/details', authMiddleware, clientEmployeeController.viewHomePage);
 
 
 module.exports = router;
