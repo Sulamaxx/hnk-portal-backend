@@ -1,4 +1,3 @@
-// Inside your knowledge search controller or routes
 
 // Search Knowledge (H&K Employee/Client Employee)
 exports.searchKnowledge = async (req, res) => {
@@ -6,7 +5,7 @@ exports.searchKnowledge = async (req, res) => {
       const { query } = req.body;
   
       // Check if the requesting user is either an H&K Employee or Client Employee
-      if (!(req.user.role === 'hkemployee' || req.user.role === 'clientemployee')) {
+      if (!(req.user.role === 'employee' || req.user.role === 'client')) {
         return res.status(403).json({ message: 'Permission denied. Only H&K Employees or Client Employees can search knowledge.' });
       }
   

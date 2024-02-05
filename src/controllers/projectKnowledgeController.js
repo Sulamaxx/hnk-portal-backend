@@ -11,25 +11,25 @@ exports.createProjectKnowledgeDocument = async (req, res) => {
     }
 
     const newProjectKnowledgeDocument = new ProjectKnowledgeDocument({
-      title,
-      content,
-      type,
-      createdBy: req.user._id,
-      projectId
+      title: title,
+      content: content,
+      type: type,
+      createdBy: req.cookies.userId,
+      projectId: projectId
     });
 
     // Logic to handle emails (sending data to salsa system)
     // You may need to implement this part based on your use case
 
-    const savedDocument = await newProjectKnowledgeDocument.save();
+    const savedDocument = await newProjectKnowledgeDocument.save().populate('projectId');
 
     // Inform the beenz system about the employee interaction
     // You may need to implement this part based on your integration with the beenz system
 
-    res.status(201).json(savedDocument);
+    res.status(201).json({ savedDocument, message: 'success' });
   } catch (error) {
     console.error('Error in createProjectKnowledgeDocument route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -43,7 +43,7 @@ exports.readProjectKnowledgeDocument = async (req, res) => {
     }
     const documentId = req.params.id;
 
-    const foundDocument = await ProjectKnowledgeDocument.findById(documentId);
+    const foundDocument = await ProjectKnowledgeDocument.findById(documentId).populate('projectId');
 
     if (!foundDocument) {
       return res.status(404).json({ message: 'Project knowledge document not found' });
@@ -52,10 +52,10 @@ exports.readProjectKnowledgeDocument = async (req, res) => {
     // Inform the beenz system about the employee interaction
     // You may need to implement this part based on your integration with the beenz system
 
-    res.status(200).json(foundDocument);
+    res.status(200).json(foundDocument).populate('projectId');
   } catch (error) {
     console.error('Error in readProjectKnowledgeDocument route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -74,7 +74,7 @@ exports.updateProjectKnowledgeDocument = async (req, res) => {
       documentId,
       { title, content, type },
       { new: true }
-    ).populate('createdBy', 'username');
+    ).populate('projectId');
 
     if (!updatedDocument) {
       return res.status(404).json({ message: 'Project knowledge document not found' });
@@ -83,10 +83,10 @@ exports.updateProjectKnowledgeDocument = async (req, res) => {
     // Inform the beenz system about the employee interaction
     // You may need to implement this part based on your integration with the beenz system
 
-    res.status(200).json(updatedDocument);
+    res.status(200).json({ updatedDocument, message: 'Successfully Updated' });
   } catch (error) {
     console.error('Error in updateProjectKnowledgeDocument route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -100,7 +100,7 @@ exports.deleteProjectKnowledgeDocument = async (req, res) => {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can delete project knowledge documents.' });
     }
 
-    const deletedDocument = await ProjectKnowledgeDocument.findByIdAndDelete(documentId);
+    const deletedDocument = await ProjectKnowledgeDocument.findByIdAndDelete(documentId).populate('projectId');
 
     if (!deletedDocument) {
       return res.status(404).json({ message: 'Project knowledge document not found' });
@@ -112,7 +112,7 @@ exports.deleteProjectKnowledgeDocument = async (req, res) => {
     res.status(200).json({ message: 'Project knowledge document deleted successfully' });
   } catch (error) {
     console.error('Error in deleteProjectKnowledgeDocument route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -123,10 +123,10 @@ exports.allProjectKnowledgeDocuments = async (req, res) => {
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can delete project knowledge documents.' });
     }
-    const allDocuments = await ProjectKnowledgeDocument.find().populate('createdBy', 'username');
-    res.status(200).json(allDocuments);
+    const allDocuments = await ProjectKnowledgeDocument.find().populate('projectId');
+    res.status(200).json({ allDocuments, message: 'success' });
   } catch (error) {
     console.error('Error in allProjectKnowledgeDocuments route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 };

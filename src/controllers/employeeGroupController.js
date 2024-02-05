@@ -5,7 +5,7 @@ exports.createGroup = async (req, res) => {
         const { name, members, description } = req.body;
         const newEmployeeGroup = new EmployeeGroup({ name, members, description });
         const savedEmployeeGroup = await newEmployeeGroup.save();
-        res.status(201).json({ savedEmployeeGroup, message: 'Employee group added successfully' });
+        res.status(201).json({ savedEmployeeGroup: savedEmployeeGroup, message: 'Employee group added successfully' });
     } catch (error) {
         if (error.message.startsWith("E11000 duplicate key error")) {
             return res.status(400).json({ message: 'Employee Group name already exists' });
@@ -26,7 +26,7 @@ exports.readGroup = async (req, res) => {
             res.status(404).json({ message: 'Employee Group not found' });
             return;
         }
-        res.status(200).json({ foundEmployeeGroup, message: 'success' });
+        res.status(200).json({ foundEmployeeGroup: foundEmployeeGroup, message: 'success' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -112,7 +112,7 @@ exports.deleteGroup = async (req, res) => {
 exports.allGroup = async (req, res) => {
     try {
         const allEmployeeGroups = await EmployeeGroup.find().populate('members');
-        res.status(200).json({ allEmployeeGroups, message: 'success' });
+        res.status(200).json({ allEmployeeGroups: allEmployeeGroups, message: 'success' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
