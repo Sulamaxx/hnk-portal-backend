@@ -13,7 +13,7 @@ exports.createProject = async (req, res) => {
     if (error.message.startsWith("E11000 duplicate key error")) {
       return res.status(400).json({ message: 'Project already exists' });
     } else {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ message: error.message });
     }
   }
 }
@@ -24,14 +24,14 @@ exports.readProject = async (req, res) => {
     const projectId = req.params.id;
     const foundProject = await Project.findById(projectId).populate('employeeGroup');
     if (!foundProject) {
-      res.status(404).json({ error: 'Project not found' });
+      res.status(404).json({ message: 'Project not found' });
       return;
     }
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
-    res.status(200).json(foundProject);
+    res.status(200).json({ foundProject, message: 'success' });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -46,7 +46,7 @@ exports.updateProject = async (req, res) => {
       { new: true }
     ).populate('employeeGroup');
     if (!updatedProject) {
-      res.status(404).json({ error: 'Project not found' });
+      res.status(404).json({ message: 'Project not found' });
       return;
     }
     // Inform Beenz system about the employee interaction
@@ -56,7 +56,7 @@ exports.updateProject = async (req, res) => {
     if (error.message.startsWith("Plan executor error during findAndModify")) {
       return res.status(400).json({ message: 'Project name already exists' });
     } else {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ message: error.message });
     }
   }
 }
@@ -67,14 +67,14 @@ exports.deleteProject = async (req, res) => {
     const projectId = req.params.id;
     const deletedProject = await Project.findByIdAndDelete(projectId);
     if (!deletedProject) {
-      res.status(404).json({ error: 'Project not found' });
+      res.status(404).json({ message: 'Project not found' });
       return;
     }
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
     res.status(200).json({ message: 'Project deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -84,8 +84,8 @@ exports.allProject = async (req, res) => {
     const allProjects = await Project.find().populate('employeeGroup');
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
-    res.status(200).json(allProjects);
+    res.status(200).json({ allProjects, message: 'success' });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 }

@@ -16,7 +16,7 @@ exports.getUsersByRole = async (req, res) => {
         }
 
         // Return Users
-        res.status(200).json(users);
+        res.status(200).json({ users, message: 'success' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -34,7 +34,7 @@ exports.getAllUsers = async (req, res) => {
         // Retrieve all users from the database
         const users = await User.find({}, { password: 0, refreshToken: 0 }); // Exclude password and refreshToken fields
 
-        res.status(200).json({ users });
+        res.status(200).json({ users, message: 'success' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -47,6 +47,10 @@ exports.getUserById = async (req, res) => {
     const userId = req.params.userId;
 
     try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
         // System retrieves the requested user information.
         const user = await User.findById(userId);
 
@@ -55,7 +59,7 @@ exports.getUserById = async (req, res) => {
         }
 
         // The user details are displayed to the admin.
-        res.status(200).json({ user });
+        res.status(200).json({ user, message: 'success' });
     } catch (error) {
         console.error('Error in read user route:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -69,6 +73,10 @@ exports.updateUser = async (req, res) => {
     const updatedUserData = req.body;
 
     try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
         // System displays the current user details.
         const user = await User.findById(userId);
 
@@ -95,6 +103,10 @@ exports.deleteUser = async (req, res) => {
     const userId = req.params.userId;
 
     try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
         // System prompts the admin for confirmation.
         const user = await User.findById(userId);
 
@@ -119,6 +131,10 @@ exports.searchUsers = async (req, res) => {
     const searchQuery = req.query.q;
 
     try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
         // System retrieves users based on the search query.
         const users = await User.find({
             $or: [
@@ -133,7 +149,7 @@ exports.searchUsers = async (req, res) => {
         }
 
         // Display the search results to the admin.
-        res.status(200).json({ users });
+        res.status(200).json({ users, message: 'success' });
     } catch (error) {
         console.error('Error in search users route:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -163,6 +179,10 @@ exports.searchEmployees = async (req, res) => {
     const searchQuery = req.query.q;
 
     try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
         // System retrieves employees based on the search query and 'employee' role.
         const employees = await User.find({
             role: 'employee',
@@ -177,7 +197,7 @@ exports.searchEmployees = async (req, res) => {
             return res.status(404).json({ message: 'No employees found for the given search query' });
         }
 
-        res.status(200).json({ employees });
+        res.status(200).json({ employees, message: 'success' });
     } catch (error) {
         console.error('Error in search employees route:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -194,7 +214,7 @@ exports.getAllClients = async (req, res) => {
         // Retrieve all clients from the database based on the 'client' role
         const clients = await User.find({ role: 'client' }, { password: 0, refreshToken: 0 });
 
-        res.status(200).json({ clients });
+        res.status(200).json({ clients, message: 'success' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -205,6 +225,10 @@ exports.searchClients = async (req, res) => {
     const searchQuery = req.query.q;
 
     try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
         // System retrieves clients based on the search query and 'client' role.
         const clients = await User.find({
             role: 'client',
@@ -219,7 +243,7 @@ exports.searchClients = async (req, res) => {
             return res.status(404).json({ message: 'No clients found for the given search query' });
         }
 
-        res.status(200).json({ clients });
+        res.status(200).json({ clients, message: 'success' });
     } catch (error) {
         console.error('Error in search clients route:', error);
         res.status(500).json({ message: 'Internal Server Error' });
