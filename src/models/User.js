@@ -24,8 +24,8 @@ const userSchema = new mongoose.Schema({
   revokedTokens: [{ type: String }],
   img: { type: String },
   createdAt: { type: Date, default: Date.now },
-  companyName: { type: String },
-  description: { type: String },
+  companyName: { type: String, default: null },
+  description: { type: String, default: null },
 
   groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EmployeeGroup' }],
 

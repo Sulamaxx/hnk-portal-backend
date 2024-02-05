@@ -9,7 +9,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/img/' });
 
 router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
-  const { first_name, last_name, email, address, mobile, username, password, role } = req.body;
+  const { first_name, last_name, email, address, mobile, username, password, role, companyName, description } = req.body;
   const image = req.file ? req.file.path : null;
 
   try {
@@ -34,6 +34,8 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       password: hashedPassword,
       role,
       image: role === 'client' ? image : undefined,
+      companyName,
+      description
     });
 
     await newUser.save();
