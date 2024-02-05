@@ -10,7 +10,7 @@ exports.getUsersByRole = async (req, res) => {
             return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
         }
 
-        const users = await User.find({ role }, { password: 0, refreshToken: 0 });
+        const users = await User.find({ role }, { password: 0, refreshToken: 0, revokedTokens: 0 });
         if (!users || users.length === 0) {
             return res.status(404).json({ message: `No users found for role ${role}` });
         }
@@ -19,7 +19,7 @@ exports.getUsersByRole = async (req, res) => {
         res.status(200).json({ users, message: 'success' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -32,12 +32,12 @@ exports.getAllUsers = async (req, res) => {
         }
 
         // Retrieve all users from the database
-        const users = await User.find({}, { password: 0, refreshToken: 0 }); // Exclude password and refreshToken fields
+        const users = await User.find({}, { password: 0, refreshToken: 0, revokedTokens: 0 }); // Exclude password and refreshToken fields
 
         res.status(200).json({ users, message: 'success' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -52,7 +52,7 @@ exports.getUserById = async (req, res) => {
             return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
         }
         // System retrieves the requested user information.
-        const user = await User.findById(userId);
+        const user = await User.findById({ _id: userId }, { password: 0, refreshToken: 0, revokedTokens: 0 });
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -62,7 +62,7 @@ exports.getUserById = async (req, res) => {
         res.status(200).json({ user, message: 'success' });
     } catch (error) {
         console.error('Error in read user route:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -78,7 +78,7 @@ exports.updateUser = async (req, res) => {
             return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
         }
         // System displays the current user details.
-        const user = await User.findById(userId);
+        const user = await User.findById({ _id: userId }, { password: 0, refreshToken: 0, revokedTokens: 0 });
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -93,7 +93,7 @@ exports.updateUser = async (req, res) => {
         res.status(200).json({ user, message: 'User updated successfully' });
     } catch (error) {
         console.error('Error in update user route:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -121,7 +121,7 @@ exports.deleteUser = async (req, res) => {
         res.status(200).json({ message: 'User deleted successfully' });
     } catch (error) {
         console.error('Error in delete user route:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -142,7 +142,7 @@ exports.searchUsers = async (req, res) => {
                 { email: { $regex: new RegExp(searchQuery, 'i') } }, // Case-insensitive search for email
                 { username: { $regex: new RegExp(searchQuery, 'i') } } // Case-insensitive search for username
             ]
-        });
+        }, { password: 0, refreshToken: 0, revokedTokens: 0 });
 
         if (!users || users.length === 0) {
             return res.status(404).json({ message: 'No users found for the given search query' });
@@ -152,7 +152,7 @@ exports.searchUsers = async (req, res) => {
         res.status(200).json({ users, message: 'success' });
     } catch (error) {
         console.error('Error in search users route:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -165,12 +165,12 @@ exports.getAllEmployees = async (req, res) => {
         }
 
         // Retrieve all employees from the database based on the 'employee' role
-        const employees = await User.find({ role: 'employee' }, { password: 0, refreshToken: 0 });
+        const employees = await User.find({ role: 'employee' }, { password: 0, refreshToken: 0, revokedTokens: 0 });
 
         res.status(200).json({ users: employees, message: 'success' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -191,7 +191,7 @@ exports.searchEmployees = async (req, res) => {
                 { email: { $regex: new RegExp(searchQuery, 'i') } },
                 { username: { $regex: new RegExp(searchQuery, 'i') } }
             ]
-        });
+        }, { password: 0, refreshToken: 0, revokedTokens: 0 });
 
         if (!employees || employees.length === 0) {
             return res.status(404).json({ message: 'No employees found for the given search query' });
@@ -200,7 +200,7 @@ exports.searchEmployees = async (req, res) => {
         res.status(200).json({ employees, message: 'success' });
     } catch (error) {
         console.error('Error in search employees route:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -212,12 +212,12 @@ exports.getAllClients = async (req, res) => {
         }
 
         // Retrieve all clients from the database based on the 'client' role
-        const clients = await User.find({ role: 'client' }, { password: 0, refreshToken: 0 });
+        const clients = await User.find({ role: 'client' }, { password: 0, refreshToken: 0, revokedTokens: 0 });
 
         res.status(200).json({ clients, message: 'success' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -237,7 +237,7 @@ exports.searchClients = async (req, res) => {
                 { email: { $regex: new RegExp(searchQuery, 'i') } },
                 { username: { $regex: new RegExp(searchQuery, 'i') } }
             ]
-        });
+        }, { password: 0, refreshToken: 0, revokedTokens: 0 });
 
         if (!clients || clients.length === 0) {
             return res.status(404).json({ message: 'No clients found for the given search query' });
@@ -246,6 +246,6 @@ exports.searchClients = async (req, res) => {
         res.status(200).json({ clients, message: 'success' });
     } catch (error) {
         console.error('Error in search clients route:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: error.message });
     }
 };

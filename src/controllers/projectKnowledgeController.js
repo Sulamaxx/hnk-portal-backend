@@ -43,7 +43,7 @@ exports.readProjectKnowledgeDocument = async (req, res) => {
     }
     const documentId = req.params.id;
 
-    const foundDocument = await ProjectKnowledgeDocument.findById(documentId).populate('');
+    const foundDocument = await ProjectKnowledgeDocument.findById(documentId);
 
     if (!foundDocument) {
       return res.status(404).json({ message: 'Project knowledge document not found' });
