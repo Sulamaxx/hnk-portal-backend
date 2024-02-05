@@ -3,6 +3,9 @@ const Project = require('../models/Project ');
 // Create Project
 exports.createProject = async (req, res) => {
   try {
+    if (req.user.role !== 'employee') {
+      return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
+    }
     const { name, description, employeeGroupId } = req.body;
     const newProject = new Project({ name, description, employeeGroup: employeeGroupId });
     const savedProject = await newProject.save();
@@ -21,6 +24,9 @@ exports.createProject = async (req, res) => {
 // Read Project
 exports.readProject = async (req, res) => {
   try {
+    if (req.user.role !== 'employee') {
+      return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
+    }
     const projectId = req.params.id;
     const foundProject = await Project.findById(projectId).populate('employeeGroup');
     if (!foundProject) {
@@ -38,6 +44,9 @@ exports.readProject = async (req, res) => {
 // Update Project
 exports.updateProject = async (req, res) => {
   try {
+    if (req.user.role !== 'employee') {
+      return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
+    }
     const projectId = req.params.id;
     const { name, description, employeeGroupId } = req.body;
     const updatedProject = await Project.findByIdAndUpdate(
@@ -64,6 +73,9 @@ exports.updateProject = async (req, res) => {
 // Delete Project
 exports.deleteProject = async (req, res) => {
   try {
+    if (req.user.role !== 'employee') {
+      return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
+    }
     const projectId = req.params.id;
     const deletedProject = await Project.findByIdAndDelete(projectId);
     if (!deletedProject) {
@@ -81,6 +93,9 @@ exports.deleteProject = async (req, res) => {
 // Get all Projects
 exports.allProject = async (req, res) => {
   try {
+    if (req.user.role !== 'employee') {
+      return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
+    }
     const allProjects = await Project.find().populate('employeeGroup');
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here

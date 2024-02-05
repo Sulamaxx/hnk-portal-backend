@@ -16,6 +16,7 @@ router.use('/api/user', projectRoutes);
 router.use('/api', projectRoutes);
 router.use('/api', announcementRoutes);
 router.use('/api', employeeGroupRoutes);
+// router.use('/api', projectKnowledgeDocumentRoutes);
 
 module.exports = router;
 
