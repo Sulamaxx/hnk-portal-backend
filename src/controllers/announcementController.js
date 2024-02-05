@@ -10,19 +10,14 @@ exports.createAnnouncement = async (req, res) => {
         const savedAnnouncement = await newAnnouncement.save();
         res.status(201).json(savedAnnouncement);
     } catch (error) {
-        if (error.message.startsWith("E11000 duplicate key error")) {
-            return res.status(400).json({ message: 'Announcement already exists' });
-          } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-          }
-       
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 // Read Announcement
 exports.readAnnouncement = async (req, res) => {
     try {
         const announcementId = req.params.id;
-        const foundAnnouncement = await Announcement.findById(announcementId).populate('author', 'first_name','last_name','role');
+        const foundAnnouncement = await Announcement.findById(announcementId).populate('author', 'first_name', 'last_name', 'role');
         if (!foundAnnouncement) {
             res.status(404).json({ error: 'Announcement not found' });
             return;
@@ -42,18 +37,17 @@ exports.updateAnnouncement = async (req, res) => {
             announcementId,
             { title, content, author },
             { new: true }
-        ).populate('author', 'first_name','last_name','role');
+        ).populate({
+            path: 'author',
+            select: 'first_name last_name role'
+        });
         if (!updatedAnnouncement) {
             res.status(404).json({ error: 'Announcement not found' });
             return;
         }
         res.status(200).json(updatedAnnouncement);
     } catch (error) {
-        if (error.message.startsWith("Plan executor error during findAndModify")) {
-            return res.status(400).json({ message: 'Announcement name already exists' });
-          } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-          }
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 // Delete Announcement
@@ -73,7 +67,10 @@ exports.deleteAnnouncement = async (req, res) => {
 // Get all Announcements
 exports.allAnnouncement = async (req, res) => {
     try {
-        const allAnnouncements = await Announcement.find().populate('author', 'first_name','last_name','role');
+        const allAnnouncements = await Announcement.find().populate({
+            path: 'author',
+            select: 'first_name last_name role'
+        });
         res.status(200).json(allAnnouncements);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });

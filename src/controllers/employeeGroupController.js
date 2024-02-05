@@ -58,6 +58,42 @@ exports.
         }
     }
 
+// Update EmployeeGroupTask
+exports.
+    updateGroupTasks = async (req, res) => {
+        try {
+            const employeeGroupId = req.params.id;
+            const { tasksCompleted: newTasksCompleted } = req.body;
+
+            // Fetch the current EmployeeGroup document
+            const currentEmployeeGroup = await EmployeeGroup.findById(employeeGroupId);
+
+            if (!currentEmployeeGroup) {
+                res.status(404).json({ error: 'Employee Group not found' });
+                return;
+            }
+
+            // Add the newTasksCompleted to the existing tasksCompleted
+            const updatedTasksCompleted = currentEmployeeGroup.tasksCompleted + newTasksCompleted;
+
+            // Update the EmployeeGroup with the new tasksCompleted value
+            const updatedEmployeeGroup = await EmployeeGroup.findByIdAndUpdate(
+                employeeGroupId,
+                { tasksCompleted: updatedTasksCompleted },
+                { new: true }
+            );
+
+            res.status(200).json({ employeeGroup: updatedEmployeeGroup, message: 'Employee group updated successfully' });
+        } catch (error) {
+
+            if (error.message.startsWith("Plan executor error during findAndModify")) {
+                return res.status(400).json({ message: 'Employee Group name already exists' });
+            } else {
+                res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+        }
+    }
 
 // Delete EmployeeGroup
 exports.deleteGroup = async (req, res) => {

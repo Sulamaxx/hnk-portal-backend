@@ -9,6 +9,7 @@ router.post('/employee-groups', authMiddleware, groupController.createGroup);
 router.get('/employee-groups', authMiddleware, groupController.allGroup);
 router.get('/employee-groups/:id', authMiddleware, groupController.readGroup);
 router.put('/employee-groups/:id', authMiddleware, groupController.updateGroup);
+router.put('/employee-groups/task/:id', authMiddleware, groupController.updateGroupTasks);
 router.delete('/employee-groups/:id', authMiddleware, groupController.deleteGroup);
 
 module.exports = router;
