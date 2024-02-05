@@ -6,11 +6,23 @@ const User = require('../../models/User');
 const authMiddleware = require('../../middlewares/authMiddleware');
 
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/img/' });
+// const upload = multer({ dest: 'uploads/img/' });
+const upload = multer({
+  dest: 'uploads/img/',
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('File is not an image!'), false);
+    }
+    cb(null, true);
+  },
+});
+
 
 router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
+  console.log('req.file:', req.file);
   const { first_name, last_name, email, address, mobile, username, password, role, companyName, description } = req.body;
   const image = req.file ? req.file.path : null;
+  console.log('image:', image);
 
   try {
     if (req.user.role !== 'admin') {
