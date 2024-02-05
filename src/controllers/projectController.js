@@ -22,7 +22,7 @@ exports.createProject = async (req, res) => {
 exports.readProject = async (req, res) => {
   try {
     const projectId = req.params.id;
-    const foundProject = await Project.findById(projectId).populate('employeeGroup', 'name');
+    const foundProject = await Project.findById(projectId).populate('employeeGroup').populate('members');
     if (!foundProject) {
       res.status(404).json({ error: 'Project not found' });
       return;
@@ -81,7 +81,7 @@ exports.deleteProject = async (req, res) => {
 // Get all Projects
 exports.allProject = async (req, res) => {
   try {
-    const allProjects = await Project.find().populate('employeeGroup', 'name');
+    const allProjects = await Project.find().populate('employeeGroup');
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
     res.status(200).json(allProjects);
