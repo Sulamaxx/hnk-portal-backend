@@ -9,9 +9,11 @@ exports.createProject = async (req, res) => {
     const { name, description, employeeGroupId } = req.body;
     const newProject = new Project({ name, description, employeeGroup: employeeGroupId });
     const savedProject = await newProject.save();
+
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
-    res.status(201).json({ savedProject, message: 'Project added successfully' });
+
+    res.status(201).json({ savedProject: savedProject, message: 'Project added successfully' });
   } catch (error) {
     if (error.message.startsWith("E11000 duplicate key error")) {
       return res.status(400).json({ message: 'Project already exists' });
@@ -96,7 +98,16 @@ exports.allProject = async (req, res) => {
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
     }
+    // const allProjects = await Project.find().populate({
+    //   path: 'employeeGroup',
+    //   populate: {
+    //     path: 'members',
+    //     select: 'first_name last_name email address mobile role',
+    //   },
+    // });
     const allProjects = await Project.find().populate('employeeGroup');
+
+    console.log(allProjects);
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
     res.status(200).json({ allProjects, message: 'success' });

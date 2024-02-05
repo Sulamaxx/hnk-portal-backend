@@ -6,6 +6,7 @@ const projectSchema = new mongoose.Schema({
   description: { type: String },
   // Relationship with EmployeeGroup - Assume a project is associated with an employee group
   employeeGroup: { type: mongoose.Schema.Types.ObjectId, ref: 'EmployeeGroup' },
+  
 });
 
 const Project = mongoose.model('Project', projectSchema);

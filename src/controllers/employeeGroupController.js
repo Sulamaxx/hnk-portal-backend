@@ -24,7 +24,7 @@ exports.readGroup = async (req, res) => {
         const foundEmployeeGroup = await EmployeeGroup.findById(employeeGroupId).populate({
             path: 'members',
             select: 'first_name last_name email address mobile role'
-          });
+        });
         if (!foundEmployeeGroup) {
             res.status(404).json({ message: 'Employee Group not found' });
             return;
@@ -46,7 +46,7 @@ exports.updateGroup = async (req, res) => {
         ).populate({
             path: 'members',
             select: 'first_name last_name email address mobile role'
-          });
+        });
         if (!updatedEmployeeGroup) {
             res.status(404).json({ message: 'Employee Group not found' });
             return;
@@ -88,7 +88,7 @@ exports.updateGroupTasks = async (req, res) => {
         ).populate({
             path: 'members',
             select: 'first_name last_name email address mobile role'
-          });
+        });
 
         res.status(200).json({ employeeGroup: updatedEmployeeGroup, message: 'Employee group updated successfully' });
     } catch (error) {
@@ -120,11 +120,18 @@ exports.deleteGroup = async (req, res) => {
 // Get all EmployeeGroups
 exports.allGroup = async (req, res) => {
     try {
-        const allEmployeeGroups = await EmployeeGroup.find().populate({
-            path: 'members',
-            select: 'first_name last_name email address mobile role'
-          });
-        res.status(200).json({ allEmployeeGroups: allEmployeeGroups, message: 'success' });
+        // const allEmployeeGroups = await EmployeeGroup.find().populate({
+        //     path: 'members',
+        //     select: 'first_name last_name email address mobile role'
+        //   });
+
+
+
+        const allEmployeeGroups = await EmployeeGroup.find();
+
+       const Test= allEmployeeGroups.members.populate();
+
+        res.status(200).json({ allEmployeeGroups: Test, message: 'success' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
