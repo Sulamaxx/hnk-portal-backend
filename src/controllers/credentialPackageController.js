@@ -1,10 +1,9 @@
-// Inside your credential package controller or routes
 
 // Create Credential Package (H&K Employee)
 exports.createCredentialPackage = async (req, res) => {
     try {
       // Check if the requesting user is an H&K Employee
-      if (req.user.role !== 'hkemployee') {
+      if (req.user.role !== 'employee') {
         return res.status(403).json({ message: 'Permission denied. Only H&K Employees can create credential packages.' });
       }
   
@@ -54,7 +53,7 @@ exports.createCredentialPackage = async (req, res) => {
   exports.updateCredentialPackage = async (req, res) => {
     try {
       // Check if the requesting user is an H&K Employee
-      if (req.user.role !== 'hkemployee') {
+      if (req.user.role !== 'employee') {
         return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
       }
   
@@ -83,7 +82,7 @@ exports.createCredentialPackage = async (req, res) => {
   exports.deleteCredentialPackage = async (req, res) => {
     try {
       // Check if the requesting user is an H&K Employee
-      if (req.user.role !== 'hkemployee') {
+      if (req.user.role !== 'employee') {
         return res.status(403).json({ message: 'Permission denied. Only H&K Employees can delete credential packages.' });
       }
   

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { isEmail } = require('validator');
+const EmployeeGroup = require('./EmployeeGroup');
 
 const userSchema = new mongoose.Schema({
   first_name: { type: String, required: true },
@@ -26,13 +27,21 @@ const userSchema = new mongoose.Schema({
   companyName: { type: String },
   description: { type: String },
 
+  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EmployeeGroup' }],
 
-  // Add these references to other models
-  // biography: { type: mongoose.Schema.Types.ObjectId, ref: 'Biography' },
   folders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Folder' }],
   preferences: { type: mongoose.Schema.Types.ObjectId, ref: 'ClientPreferences' },
 
 
+});
+
+userSchema.pre('remove', async function (next) {
+  try {
+    await EmployeeGroup.updateMany({ members: this._id }, { $pull: { members: this._id } });
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const User = mongoose.model('User', userSchema);

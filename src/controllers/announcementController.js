@@ -4,6 +4,9 @@ const Announcement = require('../models/Announcement ');
 // Create Announcement
 exports.createAnnouncement = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const { title, content } = req.body;
         const author = req.cookies.userId;
         const newAnnouncement = new Announcement({ title, content, author });
@@ -16,6 +19,9 @@ exports.createAnnouncement = async (req, res) => {
 // Read Announcement
 exports.readAnnouncement = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const announcementId = req.params.id;
         const foundAnnouncement = await Announcement.findById(announcementId).populate({
             path: 'author',
@@ -34,6 +40,9 @@ exports.readAnnouncement = async (req, res) => {
 // Update Announcement
 exports.updateAnnouncement = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const announcementId = req.params.id;
         const { title, content, author } = req.body;
         const updatedAnnouncement = await Announcement.findByIdAndUpdate(
@@ -56,6 +65,9 @@ exports.updateAnnouncement = async (req, res) => {
 // Delete Announcement
 exports.deleteAnnouncement = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const announcementId = req.params.id;
         const deletedAnnouncement = await Announcement.findByIdAndDelete(announcementId);
         if (!deletedAnnouncement) {
@@ -70,6 +82,9 @@ exports.deleteAnnouncement = async (req, res) => {
 // Get all Announcements
 exports.allAnnouncement = async (req, res) => {
     try {
+        if (req.user.role !== 'admin' || req.user.role !== 'employee') {
+            return res.status(403).json({ message: 'Permission denied. Admin and employee can access this section' });
+        }
         const allAnnouncements = await Announcement.find().populate({
             path: 'author',
             select: 'first_name last_name role'
@@ -79,3 +94,4 @@ exports.allAnnouncement = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+

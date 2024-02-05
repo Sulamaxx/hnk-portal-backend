@@ -2,6 +2,9 @@ const EmployeeGroup = require('../models/EmployeeGroup');
 // Create EmployeeGroup
 exports.createGroup = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const { name, members, description } = req.body;
         const newEmployeeGroup = new EmployeeGroup({ name, members, description });
         const savedEmployeeGroup = await newEmployeeGroup.save();
@@ -20,6 +23,9 @@ exports.createGroup = async (req, res) => {
 // Read EmployeeGroup
 exports.readGroup = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const employeeGroupId = req.params.id;
         const foundEmployeeGroup = await EmployeeGroup.findById(employeeGroupId).populate({
             path: 'members',
@@ -37,6 +43,9 @@ exports.readGroup = async (req, res) => {
 // Update EmployeeGroup
 exports.updateGroup = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const employeeGroupId = req.params.id;
         const { name, description, members } = req.body;
         const updatedEmployeeGroup = await EmployeeGroup.findByIdAndUpdate(
@@ -66,6 +75,9 @@ exports.updateGroup = async (req, res) => {
 // Update EmployeeGroupTask
 exports.updateGroupTasks = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const employeeGroupId = req.params.id;
         const { tasksCompleted: newTasksCompleted } = req.body;
 
@@ -105,6 +117,9 @@ exports.updateGroupTasks = async (req, res) => {
 // Delete EmployeeGroup
 exports.deleteGroup = async (req, res) => {
     try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
         const employeeGroupId = req.params.id;
         const deletedEmployeeGroup = await EmployeeGroup.findByIdAndDelete(employeeGroupId);
         if (!deletedEmployeeGroup) {
@@ -120,18 +135,30 @@ exports.deleteGroup = async (req, res) => {
 // Get all EmployeeGroups
 exports.allGroup = async (req, res) => {
     try {
-        // const allEmployeeGroups = await EmployeeGroup.find().populate({
-        //     path: 'members',
-        //     select: 'first_name last_name email address mobile role'
-        //   });
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
+        const allEmployeeGroups = await EmployeeGroup.find().populate({
+            path: 'members',
+            select: 'first_name last_name email address mobile role'
+        });
 
+        res.status(200).json({ allEmployeeGroups: allEmployeeGroups, message: 'success' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
 
+// Get all EmployeeGroupsStatus
+exports.allGroupStatus = async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
+        }
 
-        const allEmployeeGroups = await EmployeeGroup.find();
+        const allEmployeeGroups = await EmployeeGroup.find().select('_id name description tasksCompleted groupSize engagementRate');;
 
-       const Test= allEmployeeGroups.members.populate();
-
-        res.status(200).json({ allEmployeeGroups: Test, message: 'success' });
+        res.status(200).json({ allEmployeeGroups: allEmployeeGroups, message: 'success' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

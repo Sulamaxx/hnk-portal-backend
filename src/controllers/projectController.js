@@ -8,7 +8,13 @@ exports.createProject = async (req, res) => {
     }
     const { name, description, employeeGroupId } = req.body;
     const newProject = new Project({ name, description, employeeGroup: employeeGroupId });
-    const savedProject = await newProject.save();
+    const savedProject = (await newProject.save()).populate({
+      path: 'employeeGroup',
+      populate: {
+        path: 'members',
+        select: 'first_name last_name email address mobile role',
+      },
+    });
 
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
@@ -30,7 +36,13 @@ exports.readProject = async (req, res) => {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
     }
     const projectId = req.params.id;
-    const foundProject = await Project.findById(projectId).populate('employeeGroup');
+    const foundProject = await Project.findById(projectId).populate({
+      path: 'employeeGroup',
+      populate: {
+        path: 'members',
+        select: 'first_name last_name email address mobile role',
+      },
+    });
     if (!foundProject) {
       res.status(404).json({ message: 'Project not found' });
       return;
@@ -55,7 +67,13 @@ exports.updateProject = async (req, res) => {
       projectId,
       { name, description, employeeGroup: employeeGroupId },
       { new: true }
-    ).populate('employeeGroup');
+    ).populate({
+      path: 'employeeGroup',
+      populate: {
+        path: 'members',
+        select: 'first_name last_name email address mobile role',
+      },
+    });
     if (!updatedProject) {
       res.status(404).json({ message: 'Project not found' });
       return;
@@ -98,16 +116,14 @@ exports.allProject = async (req, res) => {
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
     }
-    // const allProjects = await Project.find().populate({
-    //   path: 'employeeGroup',
-    //   populate: {
-    //     path: 'members',
-    //     select: 'first_name last_name email address mobile role',
-    //   },
-    // });
-    const allProjects = await Project.find().populate('employeeGroup');
+    const allProjects = await Project.find().populate({
+      path: 'employeeGroup',
+      populate: {
+        path: 'members',
+        select: 'first_name last_name email address mobile role',
+      },
+    });
 
-    console.log(allProjects);
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
     res.status(200).json({ allProjects, message: 'success' });
