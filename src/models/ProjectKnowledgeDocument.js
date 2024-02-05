@@ -5,7 +5,7 @@ const projectKnowledgeDocumentSchema = new mongoose.Schema({
   content: { type: String, required: true },
   type: { type: String },
   // Other project knowledge document details
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' },
 });
 

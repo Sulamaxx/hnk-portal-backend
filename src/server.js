@@ -16,10 +16,11 @@ const PORT = process.env.PORT || 3001;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+
 // Enable CORS for all routes
 app.use(cors({
     origin:'http://localhost:3000',
-    Credential:true,
+    credentials: true,
 }));
 
 // Connect to MongoDB

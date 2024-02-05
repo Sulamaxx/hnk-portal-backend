@@ -8,15 +8,17 @@ const announcementRoutes = require('./api/announcementRoutes');
 const employeeGroupRoutes = require('./api/employeeGroupRoutes');
 const projectRoutes = require('./api/projectRoutes');
 
+const projectKnowledgeDocumentRoutes = require('./api/projectKnowledgeDocumentRoutes');
+
 // Use routes
 router.use('/api/auth', authRoutes);
 router.use('/api/register', registerRoutes);
 router.use('/api/user', userRoutes);
-router.use('/api/user', projectRoutes);
+
 router.use('/api', projectRoutes);
 router.use('/api', announcementRoutes);
 router.use('/api', employeeGroupRoutes);
-// router.use('/api', projectKnowledgeDocumentRoutes);
+router.use('/api', projectKnowledgeDocumentRoutes);
 
 module.exports = router;
 
