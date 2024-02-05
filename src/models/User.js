@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
 
 
   // Add these references to other models
-  biography: { type: mongoose.Schema.Types.ObjectId, ref: 'Biography' },
+  // biography: { type: mongoose.Schema.Types.ObjectId, ref: 'Biography' },
   folders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Folder' }],
   preferences: { type: mongoose.Schema.Types.ObjectId, ref: 'ClientPreferences' },
 

@@ -1,5 +1,4 @@
 const Biography = require('../models/Biography');
-const User = require('../models/User');
 
 // Create Biography (H&K Employee)
 exports.createBiography = async (req, res) => {
@@ -15,12 +14,19 @@ exports.createBiography = async (req, res) => {
       content: content,
       author: req.cookies.userId
     });
-    const savedBiography = (await newBiography.save()).populate('auther');
+    const savedBiography = (await newBiography.save()).populate({
+      path: 'author',
+      select: 'first_name last_name email address mobile'
+    });
 
     res.status(201).json({ savedBiography: savedBiography, message: 'success' });
   } catch (error) {
-    console.error('Error in createBiography route:', error);
-    res.status(500).json({ message: error.message });
+    if (error.message.startsWith("E11000 duplicate key error")) {
+      return res.status(400).json({ message: 'Employee has already biography' });
+    } else {
+      console.error('Error in createBiography route:', error);
+      res.status(500).json({ message: error.message });
+    }
   }
 };
 
@@ -33,7 +39,10 @@ exports.readBiography = async (req, res) => {
     // Assuming you have a Biography model or schema, find and return the requested biography
     const authorId = req.cookies.userId;
     console.log(authorId)
-    const foundBiography = await Biography.findOne({ author: authorId }).populate('author');
+    const foundBiography = await Biography.findOne({ author: authorId }).populate({
+      path: 'author',
+      select: 'first_name last_name email address mobile'
+    });
 
     if (!foundBiography) {
       return res.status(404).json({ message: 'Biography not found' });
@@ -61,7 +70,10 @@ exports.updateBiography = async (req, res) => {
       { author: author },
       { content },
       { new: true }
-    );
+    ).populate({
+      path: 'author',
+      select: 'first_name last_name email address mobile'
+    });
 
     if (!updatedBiography) {
       return res.status(404).json({ message: 'Biography not found' });
@@ -85,7 +97,9 @@ exports.deleteBiography = async (req, res) => {
     const author = req.cookies.userId;
     // Assuming you have a Biography model or schema, find and delete the biography
     const deletedBiography = await Biography.findOneAndDelete({ author: author });
-
+    if (!deletedBiography) {
+      return res.status(404).json({ message: 'Biography not found' });
+    }
     res.status(200).json({ message: 'Biography deleted successfully' });
   } catch (error) {
     console.error('Error in deleteBiography route:', error);

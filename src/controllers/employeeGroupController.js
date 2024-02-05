@@ -21,7 +21,10 @@ exports.createGroup = async (req, res) => {
 exports.readGroup = async (req, res) => {
     try {
         const employeeGroupId = req.params.id;
-        const foundEmployeeGroup = await EmployeeGroup.findById(employeeGroupId).populate('members');
+        const foundEmployeeGroup = await EmployeeGroup.findById(employeeGroupId).populate({
+            path: 'members',
+            select: 'first_name last_name email address mobile role'
+          });
         if (!foundEmployeeGroup) {
             res.status(404).json({ message: 'Employee Group not found' });
             return;
@@ -40,7 +43,10 @@ exports.updateGroup = async (req, res) => {
             employeeGroupId,
             { name, description, members },
             { new: true }
-        );
+        ).populate({
+            path: 'members',
+            select: 'first_name last_name email address mobile role'
+          });
         if (!updatedEmployeeGroup) {
             res.status(404).json({ message: 'Employee Group not found' });
             return;
@@ -79,7 +85,10 @@ exports.updateGroupTasks = async (req, res) => {
             employeeGroupId,
             { tasksCompleted: updatedTasksCompleted },
             { new: true }
-        );
+        ).populate({
+            path: 'members',
+            select: 'first_name last_name email address mobile role'
+          });
 
         res.status(200).json({ employeeGroup: updatedEmployeeGroup, message: 'Employee group updated successfully' });
     } catch (error) {
@@ -111,7 +120,10 @@ exports.deleteGroup = async (req, res) => {
 // Get all EmployeeGroups
 exports.allGroup = async (req, res) => {
     try {
-        const allEmployeeGroups = await EmployeeGroup.find().populate('members');
+        const allEmployeeGroups = await EmployeeGroup.find().populate({
+            path: 'members',
+            select: 'first_name last_name email address mobile role'
+          });
         res.status(200).json({ allEmployeeGroups: allEmployeeGroups, message: 'success' });
     } catch (error) {
         res.status(500).json({ message: error.message });
