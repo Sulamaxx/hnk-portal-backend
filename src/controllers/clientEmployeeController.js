@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Biography = require("../models/Biography");
 
 // View Home Page with Company Logo (Client Employee)
 exports.viewHomePage = async (req, res) => {
@@ -25,9 +26,16 @@ exports.viewHomePage = async (req, res) => {
 // View Biography (Client Employee)
 exports.viewBiography = async (req, res) => {
   try {
+    if (req.user.role !== 'client') {
+      return res.status(403).json({ message: 'Permission denied. Only Client Employees can access this.' });
+    }
     // Assuming you have a Biography model or schema
-    const biographyId = req.params.id;
-    const foundBiography = await Biography.findById(biographyId);
+    // const biographyId = req.params.id;
+    // const foundBiography = await Biography.findById(biographyId);
+    const foundBiography = await Biography.find().populate({
+      path: 'author',
+      select: 'first_name last_name email address mobile'
+    });
 
     if (!foundBiography) {
       return res.status(404).json({ message: 'Biography not found' });
@@ -100,32 +108,32 @@ exports.changeFolderArrangementPreferences = async (req, res) => {
 
   // Inside your client employee controller or routes
 
-// Change Folder Arrangement Preferences (Client Employee)
-exports.changeFolderArrangementPreferences = async (req, res) => {
-  try {
-    const clientId = req.user.id; // Assuming user object includes client information
+  // Change Folder Arrangement Preferences (Client Employee)
+  exports.changeFolderArrangementPreferences = async (req, res) => {
+    try {
+      const clientId = req.user.id; // Assuming user object includes client information
 
-    // Fetch and update the client's folder arrangement preferences
-    const clientPreferences = await ClientPreferences.findOne({ client: clientId });
+      // Fetch and update the client's folder arrangement preferences
+      const clientPreferences = await ClientPreferences.findOne({ client: clientId });
 
-    if (!clientPreferences) {
-      // Create new preferences if not exist
-      const newPreferences = new ClientPreferences({
-        client: clientId,
-        arrangement: req.body.arrangement, // Assuming the request body includes the new arrangement preferences
-      });
-      await newPreferences.save();
-    } else {
-      // Update existing preferences
-      clientPreferences.arrangement = req.body.arrangement;
-      await clientPreferences.save();
+      if (!clientPreferences) {
+        // Create new preferences if not exist
+        const newPreferences = new ClientPreferences({
+          client: clientId,
+          arrangement: req.body.arrangement, // Assuming the request body includes the new arrangement preferences
+        });
+        await newPreferences.save();
+      } else {
+        // Update existing preferences
+        clientPreferences.arrangement = req.body.arrangement;
+        await clientPreferences.save();
+      }
+
+      res.status(200).json({ message: 'Folder arrangement preferences updated successfully' });
+    } catch (error) {
+      console.error('Error in changeFolderArrangementPreferences route:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
     }
-
-    res.status(200).json({ message: 'Folder arrangement preferences updated successfully' });
-  } catch (error) {
-    console.error('Error in changeFolderArrangementPreferences route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};
+  };
 
 };

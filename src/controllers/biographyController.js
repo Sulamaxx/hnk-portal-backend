@@ -14,10 +14,7 @@ exports.createBiography = async (req, res) => {
       content: content,
       author: req.cookies.userId
     });
-    const savedBiography = (await newBiography.save()).populate({
-      path: 'author',
-      select: 'first_name last_name email address mobile'
-    });
+    const savedBiography = (await newBiography.save());
 
     res.status(201).json({ savedBiography: savedBiography, message: 'success' });
   } catch (error) {

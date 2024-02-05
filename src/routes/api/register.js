@@ -33,7 +33,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       username,
       password: hashedPassword,
       role,
-      img: role === 'client' ? image : undefined,
+      image: role === 'client' ? image : undefined,
     });
 
     await newUser.save();
@@ -41,7 +41,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 });
 
