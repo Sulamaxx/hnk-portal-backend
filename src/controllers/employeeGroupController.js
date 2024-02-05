@@ -33,30 +33,30 @@ exports.readGroup = async (req, res) => {
 }
 // Update EmployeeGroup
 exports.
-updateGroup = async (req, res) => {
-    try {
-        const employeeGroupId = req.params.id;
-        const { name, description, members } = req.body;
-        const updatedEmployeeGroup = await EmployeeGroup.findByIdAndUpdate(
-            employeeGroupId,
-            { name, description, members },
-            { new: true }
-        );
-        if (!updatedEmployeeGroup) {
-            res.status(404).json({ error: 'Employee Group not found' });
-            return;
-        }
-        res.status(200).json({ employeeGroup: updatedEmployeeGroup, message: 'Employee group updated successfully' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-        if (error.message.startsWith("Plan executor error during findAndModify :: caused by :: E11000 duplicate key error collection:")) {
-            return res.status(400).json({ message: 'Employee Group name already exists' });
-        } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+    updateGroup = async (req, res) => {
+        try {
+            const employeeGroupId = req.params.id;
+            const { name, description, members } = req.body;
+            const updatedEmployeeGroup = await EmployeeGroup.findByIdAndUpdate(
+                employeeGroupId,
+                { name, description, members },
+                { new: true }
+            );
+            if (!updatedEmployeeGroup) {
+                res.status(404).json({ error: 'Employee Group not found' });
+                return;
+            }
+            res.status(200).json({ employeeGroup: updatedEmployeeGroup, message: 'Employee group updated successfully' });
+        } catch (error) {
 
+            if (error.message.startsWith("Plan executor error during findAndModify")) {
+                return res.status(400).json({ message: 'Employee Group name already exists' });
+            } else {
+                res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+        }
     }
-}
 
 
 // Delete EmployeeGroup
