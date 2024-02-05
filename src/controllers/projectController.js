@@ -22,7 +22,7 @@ exports.createProject = async (req, res) => {
 exports.readProject = async (req, res) => {
   try {
     const projectId = req.params.id;
-    const foundProject = await Project.findById(projectId).populate('employeeGroup').populate('members');
+    const foundProject = await Project.findById(projectId).populate('employeeGroup');
     if (!foundProject) {
       res.status(404).json({ error: 'Project not found' });
       return;
@@ -44,7 +44,7 @@ exports.updateProject = async (req, res) => {
       projectId,
       { name, description, employeeGroup: employeeGroupId },
       { new: true }
-    ).populate('employeeGroup', 'name');
+    ).populate('employeeGroup');
     if (!updatedProject) {
       res.status(404).json({ error: 'Project not found' });
       return;
@@ -53,7 +53,7 @@ exports.updateProject = async (req, res) => {
     // Code to send a request to the Beenz system can be added here
     res.status(200).json({ updatedProject, message: 'Project Updated successfully' });
   } catch (error) {
-    if (error.message.startsWith("Plan executor error during findAndModify :: caused by :: E11000 duplicate key error collection:")) {
+    if (error.message.startsWith("Plan executor error during findAndModify")) {
       return res.status(400).json({ message: 'Project name already exists' });
     } else {
       res.status(500).json({ error: 'Internal Server Error' });
