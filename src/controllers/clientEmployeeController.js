@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Biography = require("../models/Biography");
-const ProjectKnowledgeDocument = require("../models/ProjectKnowledgeDocument");
+// const ProjectKnowledgeDocument = require("../models/ProjectKnowledgeDocument");
 
 // View Home Page with Company Logo (Client Employee)
 exports.viewHomePage = async (req, res) => {
@@ -50,55 +50,55 @@ exports.viewBiography = async (req, res) => {
 };
 
 
-//  View Project Knowledge via Folders (Client Employee)
-router.get('/viewProjectKnowledgeFolders/:folderId', async (req, res) => {
-  try {
-    if (req.user.role !== 'client') {
-      return res.status(403).json({ message: 'Permission denied. Only Client Employees can access this.' });
-    }
-    const clientId = req.cookies.userId;
-    const selectedFolderId = req.params.folderId;
+// //  View Project Knowledge via Folders (Client Employee)
+// router.get('/viewProjectKnowledgeFolders/:folderId', async (req, res) => {
+//   try {
+//     if (req.user.role !== 'client') {
+//       return res.status(403).json({ message: 'Permission denied. Only Client Employees can access this.' });
+//     }
+//     const clientId = req.cookies.userId;
+//     const selectedFolderId = req.params.folderId;
 
-    const clientFolders = await Folder.find({ client: clientId });
-    const selectedFolder = clientFolders.find(folder => folder._id.equals(selectedFolderId));
+//     const clientFolders = await Folder.find({ client: clientId });
+//     const selectedFolder = clientFolders.find(folder => folder._id.equals(selectedFolderId));
 
-    if (!selectedFolder) {
-      return res.status(404).json({ message: 'Folder not found for the client' });
-    }
+//     if (!selectedFolder) {
+//       return res.status(404).json({ message: 'Folder not found for the client' });
+//     }
 
-    const knowledgeDocuments = await ProjectKnowledgeDocument.find({ folder: selectedFolderId });
+//     const knowledgeDocuments = await ProjectKnowledgeDocument.find({ folder: selectedFolderId });
 
-    res.status(200).json({ folder: selectedFolder, knowledgeDocuments });
-  } catch (error) {
-    console.error('Error in viewProjectKnowledgeFolders route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
+//     res.status(200).json({ folder: selectedFolder, knowledgeDocuments });
+//   } catch (error) {
+//     console.error('Error in viewProjectKnowledgeFolders route:', error);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 
-// Change Folder Arrangement Preferences (Client Employee)
-router.post('/changeFolderArrangementPreferences', async (req, res) => {
-  try {
-    const clientId = req.user.id;
+// // Change Folder Arrangement Preferences (Client Employee)
+// router.post('/changeFolderArrangementPreferences', async (req, res) => {
+//   try {
+//     const clientId = req.user.id;
 
-    const clientPreferences = await ClientPreferences.findOne({ client: clientId });
+//     const clientPreferences = await ClientPreferences.findOne({ client: clientId });
 
-    if (!clientPreferences) {
-      const newPreferences = new ClientPreferences({
-        client: clientId,
-        arrangement: req.body.arrangement,
-      });
-      await newPreferences.save();
-    } else {
-      clientPreferences.arrangement = req.body.arrangement;
-      await clientPreferences.save();
-    }
+//     if (!clientPreferences) {
+//       const newPreferences = new ClientPreferences({
+//         client: clientId,
+//         arrangement: req.body.arrangement,
+//       });
+//       await newPreferences.save();
+//     } else {
+//       clientPreferences.arrangement = req.body.arrangement;
+//       await clientPreferences.save();
+//     }
 
-    res.status(200).json({ message: 'Folder arrangement preferences updated successfully' });
-  } catch (error) {
-    console.error('Error in changeFolderArrangementPreferences route:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
+//     res.status(200).json({ message: 'Folder arrangement preferences updated successfully' });
+//   } catch (error) {
+//     console.error('Error in changeFolderArrangementPreferences route:', error);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
 
 
 
