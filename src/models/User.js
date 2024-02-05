@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['admin', 'employee', 'client'], required: true },
   refreshToken: { type: String },
   revokedTokens: [{ type: String }],
+  img: { type: String },
+  createdAt: { type: Date, default: Date.now },
+  companyName: { type: String },
+  description: { type: String },
 });
 
 const User = mongoose.model('User', userSchema);

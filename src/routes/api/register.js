@@ -5,26 +5,25 @@ const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 const authMiddleware = require('../../middlewares/authMiddleware');
 
-router.post('/', authMiddleware, async (req, res) => {
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/img/' });
+
+router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   const { first_name, last_name, email, address, mobile, username, password, role } = req.body;
+  const image = req.file ? req.file.path : null;
 
   try {
-
-    // Check if the user making the request has the required role (admin, for example)
     if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
     }
 
-    // Check if the user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Hash the password before saving to the database
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new user
     const newUser = new User({
       first_name,
       last_name,
@@ -34,9 +33,9 @@ router.post('/', authMiddleware, async (req, res) => {
       username,
       password: hashedPassword,
       role,
+      img: role === 'client' ? image : undefined,
     });
 
-    // Save the user to the database
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });

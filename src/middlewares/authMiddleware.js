@@ -4,7 +4,9 @@ const keys = require('../config/keys');
 const User = require('../models/User');
 
 const authMiddleware = async (req, res, next) => {
-  const token = req.header('Authorization');
+  // const token = req.header('Authorization');
+  const token = req.cookies.accessToken;
+
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized: Missing token' });

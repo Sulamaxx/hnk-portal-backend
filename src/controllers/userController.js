@@ -139,3 +139,88 @@ exports.searchUsers = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+
+exports.getAllEmployees = async (req, res) => {
+    try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
+
+        // Retrieve all employees from the database based on the 'employee' role
+        const employees = await User.find({ role: 'employee' }, { password: 0, refreshToken: 0 });
+
+        res.status(200).json({ employees });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+exports.searchEmployees = async (req, res) => {
+    const searchQuery = req.query.q;
+
+    try {
+        // System retrieves employees based on the search query and 'employee' role.
+        const employees = await User.find({
+            role: 'employee',
+            $or: [
+                { first_name: { $regex: new RegExp(searchQuery, 'i') } },
+                { email: { $regex: new RegExp(searchQuery, 'i') } },
+                { username: { $regex: new RegExp(searchQuery, 'i') } }
+            ]
+        });
+
+        if (!employees || employees.length === 0) {
+            return res.status(404).json({ message: 'No employees found for the given search query' });
+        }
+
+        res.status(200).json({ employees });
+    } catch (error) {
+        console.error('Error in search employees route:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+exports.getAllClients = async (req, res) => {
+    try {
+        // Check if the user making the request has the required role (admin, for example)
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Unauthorized: Insufficient privileges' });
+        }
+
+        // Retrieve all clients from the database based on the 'client' role
+        const clients = await User.find({ role: 'client' }, { password: 0, refreshToken: 0 });
+
+        res.status(200).json({ clients });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+exports.searchClients = async (req, res) => {
+    const searchQuery = req.query.q;
+
+    try {
+        // System retrieves clients based on the search query and 'client' role.
+        const clients = await User.find({
+            role: 'client',
+            $or: [
+                { first_name: { $regex: new RegExp(searchQuery, 'i') } },
+                { email: { $regex: new RegExp(searchQuery, 'i') } },
+                { username: { $regex: new RegExp(searchQuery, 'i') } }
+            ]
+        });
+
+        if (!clients || clients.length === 0) {
+            return res.status(404).json({ message: 'No clients found for the given search query' });
+        }
+
+        res.status(200).json({ clients });
+    } catch (error) {
+        console.error('Error in search clients route:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
