@@ -40,7 +40,6 @@ exports.viewBiography = async (req, res) => {
   }
 };
 
-// Inside your client employee controller or routes
 
 // View Project Knowledge via Folders (Client Employee)
 exports.viewProjectKnowledgeFolders = async (req, res) => {
@@ -98,4 +97,35 @@ exports.changeFolderArrangementPreferences = async (req, res) => {
     console.error('Error in changeFolderArrangementPreferences route:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
+
+  // Inside your client employee controller or routes
+
+// Change Folder Arrangement Preferences (Client Employee)
+exports.changeFolderArrangementPreferences = async (req, res) => {
+  try {
+    const clientId = req.user.id; // Assuming user object includes client information
+
+    // Fetch and update the client's folder arrangement preferences
+    const clientPreferences = await ClientPreferences.findOne({ client: clientId });
+
+    if (!clientPreferences) {
+      // Create new preferences if not exist
+      const newPreferences = new ClientPreferences({
+        client: clientId,
+        arrangement: req.body.arrangement, // Assuming the request body includes the new arrangement preferences
+      });
+      await newPreferences.save();
+    } else {
+      // Update existing preferences
+      clientPreferences.arrangement = req.body.arrangement;
+      await clientPreferences.save();
+    }
+
+    res.status(200).json({ message: 'Folder arrangement preferences updated successfully' });
+  } catch (error) {
+    console.error('Error in changeFolderArrangementPreferences route:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 };

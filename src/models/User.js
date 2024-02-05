@@ -25,6 +25,14 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   companyName: { type: String },
   description: { type: String },
+
+
+  // Add these references to other models
+  biography: { type: mongoose.Schema.Types.ObjectId, ref: 'Biography' },
+  folders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Folder' }],
+  preferences: { type: mongoose.Schema.Types.ObjectId, ref: 'ClientPreferences' },
+
+
 });
 
 const User = mongoose.model('User', userSchema);

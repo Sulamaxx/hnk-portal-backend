@@ -103,7 +103,7 @@ exports.deleteUser = async (req, res) => {
         }
 
         // Admin confirms the deletion.
-        await user.remove();
+        await user.deleteOne();
 
         // System removes the user from the database and shows success message
         res.status(200).json({ message: 'User deleted successfully' });

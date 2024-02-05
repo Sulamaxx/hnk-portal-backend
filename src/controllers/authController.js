@@ -35,6 +35,7 @@ exports.login = async (req, res) => {
 
     // Set cookies for access token and refresh token
     res.cookie('userId', user._id, { httpOnly: true, sameSite: 'None', secure: true, maxAge: maxAge * 1000 });
+    res.cookie('role', user.role, { httpOnly: true, sameSite: 'None', secure: true, maxAge: maxAge * 1000 });
     res.cookie('accessToken', accessToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: maxAge * 1000 });
     res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: maxAge * 1000 });
 

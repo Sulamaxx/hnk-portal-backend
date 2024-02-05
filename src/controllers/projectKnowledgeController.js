@@ -1,4 +1,3 @@
-// Inside your project knowledge document controller or routes
 
 // Create Project Knowledge Document (H&K Employee only)
 exports.createProjectKnowledgeDocument = async (req, res) => {
@@ -6,7 +5,7 @@ exports.createProjectKnowledgeDocument = async (req, res) => {
       const { title, content, type } = req.body;
   
       // Check if the requesting user is an H&K Employee
-      if (req.user.role !== 'hkemployee') {
+      if (req.user.role !== 'employee') {
         return res.status(403).json({ message: 'Permission denied. Only H&K Employees can create project knowledge documents.' });
       }
   
