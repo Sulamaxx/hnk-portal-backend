@@ -8,7 +8,7 @@ exports.createAnnouncement = async (req, res) => {
         const author = req.cookies.userId;
         const newAnnouncement = new Announcement({ title, content, author });
         const savedAnnouncement = await newAnnouncement.save();
-        res.status(201).json(savedAnnouncement);
+        res.status(201).json({ savedAnnouncement: savedAnnouncement, message: 'Announcement create successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -17,12 +17,15 @@ exports.createAnnouncement = async (req, res) => {
 exports.readAnnouncement = async (req, res) => {
     try {
         const announcementId = req.params.id;
-        const foundAnnouncement = await Announcement.findById(announcementId).populate('author', 'first_name', 'last_name', 'role');
+        const foundAnnouncement = await Announcement.findById(announcementId).populate({
+            path: 'author',
+            select: 'first_name last_name role'
+        });
         if (!foundAnnouncement) {
             res.status(404).json({ error: 'Announcement not found' });
             return;
         }
-        res.status(200).json(foundAnnouncement);
+        res.status(200).json({ foundAnnouncement: foundAnnouncement, message: 'success' });
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -71,7 +74,7 @@ exports.allAnnouncement = async (req, res) => {
             path: 'author',
             select: 'first_name last_name role'
         });
-        res.status(200).json(allAnnouncements);
+        res.status(200).json({ allAnnouncements: allAnnouncements, message: 'success' });
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
