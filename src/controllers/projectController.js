@@ -10,8 +10,7 @@ exports.createProject = async (req, res) => {
     const newProject = new Project({ name, description, employeeGroup, client });
     const savedProject = (await newProject.save());
 
-    // Inform Beenz system about the employee interaction
-    // Code to send a request to the Beenz system can be added here
+    // Inform Beenz system about the employee interaction - missed
 
     res.status(201).json({ savedProject: savedProject, message: 'Project added successfully' });
   } catch (error) {
@@ -44,8 +43,8 @@ exports.readProject = async (req, res) => {
       res.status(404).json({ message: 'Project not found' });
       return;
     }
-    // Inform Beenz system about the employee interaction
-    // Code to send a request to the Beenz system can be added here
+    // Inform Beenz system about the employee interaction - missed
+
     res.status(200).json({ foundProject, message: 'success' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -78,8 +77,8 @@ exports.updateProject = async (req, res) => {
       res.status(404).json({ message: 'Project not found' });
       return;
     }
-    // Inform Beenz system about the employee interaction
-    // Code to send a request to the Beenz system can be added here
+    // Inform Beenz system about the employee interaction-missed
+
     res.status(200).json({ updatedProject, message: 'Project Updated successfully' });
   } catch (error) {
     if (error.message.startsWith("Plan executor error during findAndModify")) {
@@ -102,8 +101,8 @@ exports.deleteProject = async (req, res) => {
       res.status(404).json({ message: 'Project not found' });
       return;
     }
-    // Inform Beenz system about the employee interaction
-    // Code to send a request to the Beenz system can be added here
+    // Inform Beenz system about the employee interaction - missed 
+
     res.status(200).json({ message: 'Project deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -128,8 +127,8 @@ exports.allProject = async (req, res) => {
       select: 'first_name last_name email address mobile role',
     });
 
-    // Inform Beenz system about the employee interaction
-    // Code to send a request to the Beenz system can be added here
+    // Inform Beenz system about the employee interaction -missed
+
     res.status(200).json({ allProjects, message: 'success' });
   } catch (error) {
     res.status(500).json({ message: error.message });

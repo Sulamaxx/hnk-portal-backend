@@ -1,21 +1,19 @@
 const Biography = require('../models/Biography');
 
-// Create Biography (H&K Employee)
+// Create Biography
 exports.createBiography = async (req, res) => {
   try {
     // Check if the requesting user is an H&K Employee
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can create biographies.' });
     }
-
     const { content } = req.body;
-    // Assuming you have a Biography model or schema, create a new biography
+
     const newBiography = new Biography({
       content: content,
       author: req.cookies.userId
     });
     const savedBiography = (await newBiography.save());
-
     res.status(201).json({ savedBiography: savedBiography, message: 'success' });
   } catch (error) {
     if (error.message.startsWith("E11000 duplicate key error")) {
@@ -27,13 +25,12 @@ exports.createBiography = async (req, res) => {
   }
 };
 
-// Read Biography (H&K Employee)
+// Read Biography
 exports.readBiography = async (req, res) => {
   try {
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can create biographies.' });
     }
-    // Assuming you have a Biography model or schema, find and return the requested biography
     const authorId = req.cookies.userId;
     console.log(authorId)
     const foundBiography = await Biography.findOne({ author: authorId }).populate({
@@ -52,17 +49,15 @@ exports.readBiography = async (req, res) => {
   }
 };
 
-// Update Biography (H&K Employee)
+// Update Biography
 exports.updateBiography = async (req, res) => {
   try {
     // Check if the requesting user is an H&K Employee
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update biographies.' });
     }
-
     const author = req.cookies.userId;
     const { content } = req.body;
-    // Assuming you have a Biography model or schema, find, update, and return the updated biography
     const updatedBiography = await Biography.findOneAndUpdate(
       { author: author },
       { content },
@@ -71,11 +66,9 @@ exports.updateBiography = async (req, res) => {
       path: 'author',
       select: 'first_name last_name email address mobile'
     });
-
     if (!updatedBiography) {
       return res.status(404).json({ message: 'Biography not found' });
     }
-
     res.status(200).json({ updatedBiography: updatedBiography, message: 'success' });
   } catch (error) {
     console.error('Error in updateBiography route:', error);
@@ -83,16 +76,14 @@ exports.updateBiography = async (req, res) => {
   }
 };
 
-// Delete Biography (H&K Employee)
+// Delete Biography
 exports.deleteBiography = async (req, res) => {
   try {
     // Check if the requesting user is an H&K Employee
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can delete biographies.' });
     }
-
     const author = req.cookies.userId;
-    // Assuming you have a Biography model or schema, find and delete the biography
     const deletedBiography = await Biography.findOneAndDelete({ author: author });
     if (!deletedBiography) {
       return res.status(404).json({ message: 'Biography not found' });

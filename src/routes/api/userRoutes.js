@@ -3,10 +3,11 @@ const userController = require('../../controllers/userController');
 const clientEmployeeController = require('../../controllers/clientEmployeeController');
 const authMiddleware = require('../../middlewares/authMiddleware');
 const router = express.Router();
-// General user routes
+// user by role routes
 router.get('/role/:role', authMiddleware, userController.getUsersByRole);
+// General all user routes
 router.get('/all', authMiddleware, userController.getAllUsers);
-// // Read user routes
+// // Read given user routes
 router.get('/read/:userId', authMiddleware, userController.getUserById);
 // Update any given user routes
 router.put('/update/:userId', authMiddleware, userController.updateUser);

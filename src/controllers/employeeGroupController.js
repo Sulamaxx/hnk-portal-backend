@@ -15,11 +15,8 @@ exports.createGroup = async (req, res) => {
         } else {
             res.status(500).json({ message: error.message });
         }
-
-
     }
 }
-
 // Read EmployeeGroup
 exports.readGroup = async (req, res) => {
     try {
@@ -71,7 +68,6 @@ exports.updateGroup = async (req, res) => {
 
     }
 }
-
 // Update EmployeeGroupTask
 exports.updateGroupTasks = async (req, res) => {
     try {
@@ -80,18 +76,14 @@ exports.updateGroupTasks = async (req, res) => {
         }
         const employeeGroupId = req.params.id;
         const { tasksCompleted: newTasksCompleted } = req.body;
-
         // Fetch the current EmployeeGroup document
         const currentEmployeeGroup = await EmployeeGroup.findById(employeeGroupId);
-
         if (!currentEmployeeGroup) {
             res.status(404).json({ message: 'Employee Group not found' });
             return;
         }
-
         // Add the newTasksCompleted to the existing tasksCompleted
         const updatedTasksCompleted = currentEmployeeGroup.tasksCompleted + newTasksCompleted;
-
         // Update the EmployeeGroup with the new tasksCompleted value
         const updatedEmployeeGroup = await EmployeeGroup.findByIdAndUpdate(
             employeeGroupId,
@@ -101,19 +93,15 @@ exports.updateGroupTasks = async (req, res) => {
             path: 'members',
             select: 'first_name last_name email address mobile role'
         });
-
         res.status(200).json({ employeeGroup: updatedEmployeeGroup, message: 'Employee group updated successfully' });
     } catch (error) {
-
         if (error.message.startsWith("Plan executor error during findAndModify")) {
             return res.status(400).json({ message: 'Employee Group name already exists' });
         } else {
             res.status(500).json({ message: error.message });
         }
-
     }
 }
-
 // Delete EmployeeGroup
 exports.deleteGroup = async (req, res) => {
     try {
@@ -131,7 +119,6 @@ exports.deleteGroup = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-
 // Get all EmployeeGroups
 exports.allGroup = async (req, res) => {
     try {
@@ -142,22 +129,18 @@ exports.allGroup = async (req, res) => {
             path: 'members',
             select: 'first_name last_name email address mobile role'
         });
-
         res.status(200).json({ allEmployeeGroups: allEmployeeGroups, message: 'success' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
-
 // Get all EmployeeGroupsStatus
 exports.allGroupStatus = async (req, res) => {
     try {
         if (req.user.role !== 'admin') {
             return res.status(403).json({ message: 'Permission denied. Admin can access this section' });
         }
-
         const allEmployeeGroups = await EmployeeGroup.find().select('_id name description tasksCompleted groupSize engagementRate');;
-
         res.status(200).json({ allEmployeeGroups: allEmployeeGroups, message: 'success' });
     } catch (error) {
         res.status(500).json({ message: error.message });
