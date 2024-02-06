@@ -63,7 +63,7 @@ exports.readProjectKnowledgeDocument = async (req, res) => {
 exports.updateProjectKnowledgeDocument = async (req, res) => {
   try {
     const documentId = req.params.id;
-    const { title, content, type } = req.body;
+    const { title, content, type, projectId } = req.body;
 
     // Check if the requesting user is an H&K Employee
     if (req.user.role !== 'employee') {
@@ -72,7 +72,7 @@ exports.updateProjectKnowledgeDocument = async (req, res) => {
 
     const updatedDocument = await ProjectKnowledgeDocument.findByIdAndUpdate(
       documentId,
-      { title, content, type },
+      { title, content, type, projectId },
       { new: true }
     ).populate('projectId');
 
