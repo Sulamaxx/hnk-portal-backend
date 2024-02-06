@@ -82,7 +82,7 @@ exports.deleteAnnouncement = async (req, res) => {
 // Get all Announcements
 exports.allAnnouncement = async (req, res) => {
     try {
-        if (req.user.role !== 'admin' || req.user.role !== 'employee') {
+        if (!(req.user.role === 'admin' || req.user.role === 'employee')) {
             return res.status(403).json({ message: 'Permission denied. Admin and employee can access this section' });
         }
         const allAnnouncements = await Announcement.find().populate({
