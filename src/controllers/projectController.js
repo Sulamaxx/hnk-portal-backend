@@ -6,15 +6,9 @@ exports.createProject = async (req, res) => {
     if (req.user.role !== 'employee') {
       return res.status(403).json({ message: 'Permission denied. Only H&K Employees can update credential packages.' });
     }
-    const { name, description, employeeGroupId } = req.body;
-    const newProject = new Project({ name, description, employeeGroup: employeeGroupId });
-    const savedProject = (await newProject.save()).populate({
-      path: 'employeeGroup',
-      populate: {
-        path: 'members',
-        select: 'first_name last_name email address mobile role',
-      },
-    });
+    const { name, description, employeeGroup, client } = req.body;
+    const newProject = new Project({ name, description, employeeGroup, client });
+    const savedProject = (await newProject.save());
 
     // Inform Beenz system about the employee interaction
     // Code to send a request to the Beenz system can be added here
@@ -41,7 +35,10 @@ exports.readProject = async (req, res) => {
       populate: {
         path: 'members',
         select: 'first_name last_name email address mobile role',
-      },
+      }
+    }).populate({
+      path: 'client',
+      select: 'first_name last_name email address mobile role',
     });
     if (!foundProject) {
       res.status(404).json({ message: 'Project not found' });
@@ -72,7 +69,10 @@ exports.updateProject = async (req, res) => {
       populate: {
         path: 'members',
         select: 'first_name last_name email address mobile role',
-      },
+      }
+    }).populate({
+      path: 'client',
+      select: 'first_name last_name email address mobile role',
     });
     if (!updatedProject) {
       res.status(404).json({ message: 'Project not found' });
@@ -121,7 +121,11 @@ exports.allProject = async (req, res) => {
       populate: {
         path: 'members',
         select: 'first_name last_name email address mobile role',
-      },
+      }
+
+    }).populate({
+      path: 'client',
+      select: 'first_name last_name email address mobile role',
     });
 
     // Inform Beenz system about the employee interaction

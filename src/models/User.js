@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'EmployeeGroup' }],
 
   folders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Folder' }],
-  preferences: { type: mongoose.Schema.Types.ObjectId, ref: 'ClientPreferences' },
+  // preferences: { type: mongoose.Schema.Types.ObjectId, ref: 'ClientPreferences' },
 
 
 });

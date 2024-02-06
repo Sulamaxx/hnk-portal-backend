@@ -50,7 +50,7 @@ exports.viewBiography = async (req, res) => {
 };
 
 
-// //  View Project Knowledge via Folders (Client Employee)
+//  View Project Knowledge via Folders (Client Employee)
 // router.get('/viewProjectKnowledgeFolders/:folderId', async (req, res) => {
 //   try {
 //     if (req.user.role !== 'client') {
@@ -75,7 +75,7 @@ exports.viewBiography = async (req, res) => {
 //   }
 // });
 
-// // Change Folder Arrangement Preferences (Client Employee)
+// Change Folder Arrangement Preferences (Client Employee)
 // router.post('/changeFolderArrangementPreferences', async (req, res) => {
 //   try {
 //     const clientId = req.user.id;
