@@ -1,5 +1,8 @@
 const User = require("../models/User");
 const Biography = require("../models/Biography");
+const Folder = require("../models/Folder");
+const Project = require("../models/Project ");
+const ProjectKnowledgeDocument = require("../models/projectKnowledgeDocument");
 // const ProjectKnowledgeDocument = require("../models/ProjectKnowledgeDocument");
 
 // View Home Page with Company Logo (Client Employee)
@@ -51,29 +54,87 @@ exports.viewBiography = async (req, res) => {
 
 
 //  View Project Knowledge via Folders (Client Employee)
-// router.get('/viewProjectKnowledgeFolders/:folderId', async (req, res) => {
-//   try {
-//     if (req.user.role !== 'client') {
-//       return res.status(403).json({ message: 'Permission denied. Only Client Employees can access this.' });
-//     }
-//     const clientId = req.cookies.userId;
-//     const selectedFolderId = req.params.folderId;
+exports.viewProjectKnowledgeFolders = async (req, res) => {
+  try {
+    if (req.user.role !== 'client') {
+      return res.status(403).json({ message: 'Permission denied. Only Client Employees can access this.' });
+    }
+    const clientId = req.cookies.userId;
+    const clientFolders = await Folder.find({ client: clientId });
 
-//     const clientFolders = await Folder.find({ client: clientId });
-//     const selectedFolder = clientFolders.find(folder => folder._id.equals(selectedFolderId));
+    if (!clientFolders || clientFolders.length === 0) {
+      // Create a new folder if none exists
+      const newFolder = await new Folder({ name: "Default", client: clientId }).save();
+      const allProjects = await Project.find({ client: clientId });
 
-//     if (!selectedFolder) {
-//       return res.status(404).json({ message: 'Folder not found for the client' });
-//     }
+      const contentPromises = allProjects.map(async project => {
+        const foundDocument = await ProjectKnowledgeDocument.findOne({ projectId: project._id });
 
-//     const knowledgeDocuments = await ProjectKnowledgeDocument.find({ folder: selectedFolderId });
+        if (foundDocument) {
+          newFolder.content.push(foundDocument);
+        }
+      });
 
-//     res.status(200).json({ folder: selectedFolder, knowledgeDocuments });
-//   } catch (error) {
-//     console.error('Error in viewProjectKnowledgeFolders route:', error);
-//     res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// });
+      // Wait for all content promises to resolve
+      await Promise.all(contentPromises);
+
+      // Save the updated folder
+      const updatedFolder = (await newFolder.save()).populate({
+        path: 'content',
+        populate: {
+          path: 'projectId'
+        }
+      }).execPopulate();;
+
+      res.status(200).json({ updatedFolder, message: 'Folder created and populated with documents.' });
+
+    } else {
+      // Use the existing folder if one exists
+      const existingFolder = clientFolders[0]; // Assuming you only expect one folder per client
+
+      // Update existing folder with knowledge documents
+      const allProjects = await Project.find({ client: clientId });
+
+      const contentPromises = allProjects.map(async project => {
+        const foundDocument = await ProjectKnowledgeDocument.findOne({ projectId: project._id });
+
+        if (foundDocument) {
+          existingFolder.content.push(foundDocument);
+        }
+      });
+
+      // Wait for all content promises to resolve
+      await Promise.all(contentPromises);
+
+      // Save the updated folder
+
+      const updatedFolder = await existingFolder
+        .populate({
+          path: 'content',
+          populate: {
+            path: 'projectId',
+            select: '_id name description employeeGroup',
+            populate: {
+              path: 'employeeGroup',
+              populate: {
+                path: 'members',
+                select: 'first_name last_name email address mobile role',
+              }
+            }
+          }
+        });
+
+      res.status(200).json({ updatedFolder, message: 'Folder updated with documents.' });
+    }
+
+  } catch (error) {
+    console.error('Error in viewProjectKnowledgeFolders route:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
 
 // Change Folder Arrangement Preferences (Client Employee)
 // router.post('/changeFolderArrangementPreferences', async (req, res) => {

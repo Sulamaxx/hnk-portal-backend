@@ -9,12 +9,8 @@ const employeeGroupRoutes = require('./api/employeeGroupRoutes');
 const projectRoutes = require('./api/projectRoutes');
 const projectKnowledgeDocumentRoutes = require('./api/projectKnowledgeDocumentRoutes');
 const biographyRoutes = require('./api/biographyRoutes');
-
 const clienEmployeeRoutes = require('./api/clienEmployeeRoutes');
-
 const CredentialPackageRoutes = require('./api/CredentialPackageRoutes');
-
-
 
 // Use routes
 router.use('/api/auth', authRoutes);
@@ -25,11 +21,8 @@ router.use('/api', announcementRoutes);
 router.use('/api', employeeGroupRoutes);
 router.use('/api', projectKnowledgeDocumentRoutes);
 router.use('/api', biographyRoutes);
-
 router.use('/api', CredentialPackageRoutes);
-
 router.use('/api/client-employees', clienEmployeeRoutes);
-
 
 module.exports = router;
 

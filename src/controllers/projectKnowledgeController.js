@@ -1,4 +1,4 @@
-const ProjectKnowledgeDocument = require("../models/ProjectKnowledgeDocument");
+const ProjectKnowledgeDocument = require("../models/projectKnowledgeDocument");
 
 // Create Project Knowledge Document (H&K Employee only)
 exports.createProjectKnowledgeDocument = async (req, res) => {

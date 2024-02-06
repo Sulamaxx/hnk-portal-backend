@@ -8,6 +8,7 @@ const router = express.Router();
 // router.post('/employee-groups', authMiddleware, clientEmployeeController.);
 
 router.get('/biography', authMiddleware, clientEmployeeController.viewBiography);
+router.get('/folders', authMiddleware, clientEmployeeController.viewProjectKnowledgeFolders);
 
 
 
